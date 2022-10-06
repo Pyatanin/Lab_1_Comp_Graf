@@ -8,28 +8,28 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Lab_1_Comp_Graf
 {
-    public class Program
+    public static class Program
     {
-        public static int Height = 1000;
-        public static int Width = 1000;
+        private static readonly int Height = 1000;
+        private static readonly int Width = 1000;
 
-        public class Game : GameWindow
+        private class Game : GameWindow
         {
-            public float FrameTime = 0.0f;
-            public int Fps = 0;
-            public float XPosition = 0.0f;
-            public float YPosition = 0.0f;
-            public int mode = 0;
-            public List<Vector2> points = new List<Vector2>();
-            public Color4 StandartColor4 = Color4.Black;
-            public Color4 SelectionColor4 = Color4.Red;
-            public Color4 SelectionPoinColor4 = Color4.Blue;
+            private float _frameTime = 0.0f;
+            private int _fps = 0;
+            private float _xPosition = 0.0f;
+            private float _yPosition = 0.0f;
+            private int _mode = 0;
+            public List<Vector2> Points = new List<Vector2>();
+            private readonly Color4 _standartColor4 = Color4.Black;
+            private readonly Color4 _selectionColor4 = Color4.Red;
+            private readonly Color4 _selectionPoinColor4 = Color4.Blue;
 
-            public float StandartSize = 3.0f;
-            public float SelectionSize = 6.0f;
-            public float SelectionPoinSize = 5.0f;
+            private readonly float _standartSize = 3.0f;
+            private readonly float _selectionSize = 6.0f;
+            private readonly float _selectionPoinSize = 5.0f;
 
-            public static NativeWindowSettings nativeWindowSettings = new NativeWindowSettings()
+            public static readonly NativeWindowSettings NativeWindowSettings = new NativeWindowSettings()
             {
                 Size = new Vector2i(Height, Width),
                 Location = new Vector2i(0, 30),
@@ -45,23 +45,24 @@ namespace Lab_1_Comp_Graf
                 IsFullscreen = true,
                 NumberOfSamples = 0
             };
-            public class MyPoint
-            {
-                public Color4 color = Color4.White;
-                public bool selection = false;
-                public Vector2 coordinates;
 
-                public MyPoint(Color4 color4, Vector2 vector2, bool Selection)
+            private class MyPoint
+            {
+                private Color4 _color = Color4.White;
+                public bool Selection = false;
+                public Vector2 Coordinates;
+
+                public MyPoint(Color4 color4, Vector2 vector2, bool selection)
                 {
-                    coordinates = vector2;
-                    color = color4;
-                    selection = Selection;
+                    Coordinates = vector2;
+                    _color = color4;
+                    this.Selection = selection;
                 }
 
-                public MyPoint(Vector2 vector2, bool Selection)
+                public MyPoint(Vector2 vector2, bool selection)
                 {
-                    coordinates = vector2;
-                    selection = Selection;
+                    Coordinates = vector2;
+                    this.Selection = selection;
                 }
 
                 public MyPoint()
@@ -69,37 +70,38 @@ namespace Lab_1_Comp_Graf
                 }
             }
 
-            public class Primitive
+            private class Primitive
             {
-                public int type = 0;
-                public Color4 color = Color4.White;
-                public bool selection = false;
-                public List<MyPoint> coordinates;
+                public readonly int Type = 0;
+                public readonly Color4 Color;
+                public bool Selection = false;
+                public readonly List<MyPoint> Coordinates;
 
-                public Primitive(int Type, Color4 Color, bool Selection)
+                public Primitive(int type, Color4 color, bool selection, List<MyPoint> coordinates)
                 {
-                    type = Type;
-                    color = Color;
-                    selection = Selection;
+                    this.Type = type;
+                    this.Color = color;
+                    this.Selection = selection;
+                    Coordinates = coordinates;
                 }
 
-                public Primitive(int Type, List<MyPoint> Coordinates, Color4 Color, bool Selection)
+                public Primitive(int type, List<MyPoint> coordinates, Color4 color, bool selection)
                 {
-                    type = Type;
-                    coordinates = Coordinates;
-                    color = Color;
-                    selection = Selection;
+                    this.Type = type;
+                    this.Coordinates = coordinates;
+                    this.Color = color;
+                    this.Selection = selection;
                 }
 
                 public void Primitive_add(MyPoint myPoint)
                 {
-                    coordinates.Add(myPoint);
+                    Coordinates.Add(myPoint);
                 }
             }
 
-            public class Primitives
+            private class Primitives
             {
-                public List<Primitive> listPrimitive = new List<Primitive>();
+                public readonly List<Primitive> ListPrimitive = new List<Primitive>();
 
                 public void Del_Primitive(Primitive p)
                 {
@@ -107,8 +109,8 @@ namespace Lab_1_Comp_Graf
 
             }
 
-            public Primitives primitives = new Primitives();
-            public List<MyPoint> temp = new List<MyPoint>();
+            private readonly Primitives _primitives = new Primitives();
+            private readonly List<MyPoint> _temp = new List<MyPoint>();
 
             public Game(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(
                 gameWindowSettings, nativeWindowSettings)
@@ -133,81 +135,81 @@ namespace Lab_1_Comp_Graf
 
             protected override void OnUpdateFrame(FrameEventArgs args)
             {
-                FrameTime += (float)args.Time;
-                Fps++;
-                if (FrameTime >= 1.0f)
+                _frameTime += (float)args.Time;
+                _fps++;
+                if (_frameTime >= 1.0f)
                 {
-                    Title = $"Lab_1 FPS-{Fps}";
-                    FrameTime = 0.0f;
-                    Fps = 0;
+                    Title = $"Lab_1 FPS-{_fps}";
+                    _frameTime = 0.0f;
+                    _fps = 0;
                 }
 
                 var key = KeyboardState;
 
                 if (key.IsKeyReleased(Keys.D0))
                 {
-                    if (mode != 4 && primitives.listPrimitive.Count != 0)
+                    if (_mode != 4 && _primitives.ListPrimitive.Count != 0)
                     {
-                        primitives.listPrimitive[^1].selection = false;
+                        _primitives.ListPrimitive[^1].Selection = false;
                     }
 
-                    if (mode == 4 && primitives.listPrimitive[^1].coordinates.Count != 0)
+                    if (_mode == 4 && _primitives.ListPrimitive[^1].Coordinates.Count != 0)
                     {
-                        primitives.listPrimitive[^1].selection = false;
-                        primitives.listPrimitive.Add(new Primitive(mode, new List<MyPoint>(), StandartColor4, true));
+                        _primitives.ListPrimitive[^1].Selection = false;
+                        _primitives.ListPrimitive.Add(new Primitive(_mode, new List<MyPoint>(), _standartColor4, true));
                     }
 
-                    mode = 0;
+                    _mode = 0;
                     Console.WriteLine("Click 0");
                 }
 
                 if (key.IsKeyReleased(Keys.D1))
                 {
-                    mode = 1;
+                    _mode = 1;
                     Console.WriteLine("Click 1");
                 }
 
                 if (key.IsKeyReleased(Keys.D2))
                 {
-                    mode = 2;
+                    _mode = 2;
                     Console.WriteLine("Click 2");
                 }
 
                 if (key.IsKeyReleased(Keys.D3))
                 {
-                    mode = 3;
+                    _mode = 3;
                     Console.WriteLine("Click 3");
                 }
 
                 if (key.IsKeyReleased(Keys.D4))
                 {
-                    mode = 4;
+                    _mode = 4;
                     Console.WriteLine("Click 4");
                 }
                 
                 if (key.IsKeyReleased(Keys.D9))
                 {
-                    mode = 9;
+                    _mode = 9;
                     Console.WriteLine("Click 9");
                 }
 
                 if (key.IsKeyReleased(Keys.Space))
                 {
                     Console.WriteLine("Spase");
-                    if (mode == 4 && primitives.listPrimitive[^1].coordinates.Count != 0)
+                    if (_mode == 4 && _primitives.ListPrimitive[^1].Coordinates.Count != 0)
                     {
-                        primitives.listPrimitive.Add(new Primitive(mode, new List<MyPoint>(), StandartColor4, true));
+                        _primitives.ListPrimitive.Add(new Primitive(_mode, new List<MyPoint>(), _standartColor4, true));
                     }
                 }
 
                 if (key.IsKeyReleased(Keys.Delete))
                 {
                     Console.WriteLine("Delete");
-                    for (int i = primitives.listPrimitive.Count-1; i >= 0; i--)
+                    for (var i = _primitives.ListPrimitive.Count-1; i >= 0; i--)
                     {
-                        if (primitives.listPrimitive[i].selection)
+                        if (_primitives.ListPrimitive[i].Selection)
                         {
-                            primitives.listPrimitive.RemoveAt(i);
+                            _primitives.ListPrimitive.RemoveAt(i);
                         }
                     }
                 }
@@ -216,9 +218,9 @@ namespace Lab_1_Comp_Graf
                 if (key.IsKeyReleased(Keys.Z))
                 {
                     Console.WriteLine("Click Z");
-                    if (primitives.listPrimitive.Count != 0)
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        primitives.listPrimitive.Remove(primitives.listPrimitive.Last());
+                        _primitives.ListPrimitive.Remove(_primitives.ListPrimitive.Last());
                     }
                 }
 
@@ -226,17 +228,17 @@ namespace Lab_1_Comp_Graf
                 {
                     Console.WriteLine("Backspace");
                     
-                    for (int i = primitives.listPrimitive.Count-1; i >= 0; i--)
+                    for (var i = _primitives.ListPrimitive.Count-1; i >= 0; i--)
                     {
-                        if (primitives.listPrimitive[i].type == mode)
+                        if (_primitives.ListPrimitive[i].Type == _mode)
                         {
-                            primitives.listPrimitive.RemoveAt(i);
+                            _primitives.ListPrimitive.RemoveAt(i);
                         }
                     }
                 }
 
-                XPosition = MousePosition.X - Height / 2;
-                YPosition = -MousePosition.Y + Width / 2;
+                _xPosition = MousePosition.X - Height / 2;
+                _yPosition = -MousePosition.Y + Width / 2;
                 base.OnUpdateFrame(args);
             }
 
@@ -245,61 +247,58 @@ namespace Lab_1_Comp_Graf
                 GL.ClearColor(Color4.White);
                 GL.Clear(ClearBufferMask.ColorBufferBit);
                 GL.Enable(EnableCap.PointSmooth);
-                if (primitives != null)
+                foreach (var p in _primitives.ListPrimitive)
                 {
-                    foreach (var p in primitives.listPrimitive)
+                    if (p.Coordinates.Count != 0)
                     {
-                        if (p.coordinates.Count != 0)
+                        GL.Color4(p.Color);
+                        switch (p.Type)
                         {
-                            GL.Color4(p.color);
-                            switch (p.type)
-                            {
-                                case 1:
-                                    GL.PointSize(StandartSize);
-                                    GL.Begin(PrimitiveType.Points);
-                                    break;
-                                case 2:
-                                    GL.LineWidth(StandartSize);
-                                    GL.Begin(PrimitiveType.Lines);
-                                    break;
-                                case 3:
-                                    GL.Begin(PrimitiveType.Triangles);
-                                    break;
-                                case 4:
-                                    GL.LineWidth(StandartSize);
-                                    GL.Begin(PrimitiveType.LineStrip);
-                                    break;
-                            }
+                            case 1:
+                                GL.PointSize(_standartSize);
+                                GL.Begin(PrimitiveType.Points);
+                                break;
+                            case 2:
+                                GL.LineWidth(_standartSize);
+                                GL.Begin(PrimitiveType.Lines);
+                                break;
+                            case 3:
+                                GL.Begin(PrimitiveType.Triangles);
+                                break;
+                            case 4:
+                                GL.LineWidth(_standartSize);
+                                GL.Begin(PrimitiveType.LineStrip);
+                                break;
+                        }
 
-                            foreach (var point in p.coordinates)
+                        foreach (var point in p.Coordinates)
+                        {
+                            GL.Vertex2(2 * point.Coordinates.X / Height, 2 * point.Coordinates.Y / Width);
+                        }
+
+                        GL.End();
+                        if (p.Selection)
+                        {
+                            GL.PointSize(_selectionSize);
+                            GL.Color4(_selectionColor4);
+                            GL.Begin(PrimitiveType.Points);
+                            foreach (var point in p.Coordinates)
                             {
-                                GL.Vertex2(2 * point.coordinates.X / Height, 2 * point.coordinates.Y / Width);
+                                GL.Vertex2(2 * point.Coordinates.X / Height, 2 * point.Coordinates.Y / Width);
                             }
 
                             GL.End();
-                            if (p.selection)
+                        }
+
+                        foreach (var point in p.Coordinates)
+                        {
+                            if (point.Selection)
                             {
-                                GL.PointSize(SelectionSize);
-                                GL.Color4(SelectionColor4);
+                                GL.PointSize(_selectionPoinSize);
+                                GL.Color4(_selectionPoinColor4);
                                 GL.Begin(PrimitiveType.Points);
-                                foreach (var point in p.coordinates)
-                                {
-                                    GL.Vertex2(2 * point.coordinates.X / Height, 2 * point.coordinates.Y / Width);
-                                }
-
+                                GL.Vertex2(2 * point.Coordinates.X / Height, 2 * point.Coordinates.Y / Width);
                                 GL.End();
-                            }
-
-                            foreach (var point in p.coordinates)
-                            {
-                                if (point.selection)
-                                {
-                                    GL.PointSize(SelectionPoinSize);
-                                    GL.Color4(SelectionPoinColor4);
-                                    GL.Begin(PrimitiveType.Points);
-                                    GL.Vertex2(2 * point.coordinates.X / Height, 2 * point.coordinates.Y / Width);
-                                    GL.End();
-                                }
                             }
                         }
                     }
@@ -313,25 +312,22 @@ namespace Lab_1_Comp_Graf
             {
                 base.OnMouseDown(e);
                 Console.WriteLine("Click");
-                if (e.Button == MouseButton.Left && mode == 0)
+                if (e.Button == MouseButton.Left && _mode == 0)
                 {
-                    var lUp = new Vector2(XPosition - 5, YPosition + 5);
+                    var lUp = new Vector2(_xPosition - 5, _yPosition + 5);
 
-                    var rDown = new Vector2(XPosition + 5, YPosition - 5);
-                    if (primitives.listPrimitive.Count != 0)
+                    var rDown = new Vector2(_xPosition + 5, _yPosition - 5);
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        foreach (var p in primitives.listPrimitive)
+                        foreach (var p in _primitives.ListPrimitive)
                         {
-                            foreach (var coord in p.coordinates)
+                            foreach (var coord in p.Coordinates)
                             {
-                                if (coord.coordinates.X > lUp.X && coord.coordinates.Y < lUp.Y)
+                                if (coord.Coordinates.X > lUp.X && coord.Coordinates.Y < lUp.Y)
                                 {
-                                    if (coord.coordinates.X < rDown.X && coord.coordinates.Y > rDown.Y)
+                                    if (coord.Coordinates.X < rDown.X && coord.Coordinates.Y > rDown.Y)
                                     {
-                                        if (p.selection)
-                                            p.selection = false;
-                                        else
-                                            p.selection = true;
+                                        p.Selection = !p.Selection;
                                     }
                                 }
                             }
@@ -339,124 +335,121 @@ namespace Lab_1_Comp_Graf
                     }
                 }
                 
-                if (e.Button == MouseButton.Left && mode == 9)
+                if (e.Button == MouseButton.Left && _mode == 9)
                 {
-                    var lUp = new Vector2(XPosition - 5, YPosition + 5);
-                    var rDown = new Vector2(XPosition + 5, YPosition - 5);
-                    if (primitives.listPrimitive.Count != 0)
+                    var lUp = new Vector2(_xPosition - 5, _yPosition + 5);
+                    var rDown = new Vector2(_xPosition + 5, _yPosition - 5);
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        foreach (var p in primitives.listPrimitive)
+                        foreach (var p in _primitives.ListPrimitive)
                         {
-                            if (p.selection)
+                            if (p.Selection)
                             {
-                                foreach (var coord in p.coordinates)
+                                foreach (var coord in p.Coordinates)
                                 {
-                                    if (coord.coordinates.X > lUp.X && coord.coordinates.Y < lUp.Y)
+                                    if (coord.Coordinates.X > lUp.X && coord.Coordinates.Y < lUp.Y)
                                     {
-                                        if (coord.coordinates.X < rDown.X && coord.coordinates.Y > rDown.Y)
+                                        if (coord.Coordinates.X < rDown.X && coord.Coordinates.Y > rDown.Y)
                                         {
-                                            if (coord.selection)
-                                                coord.selection = false;
-                                            else
-                                                coord.selection = true;
+                                            coord.Selection = !coord.Selection;
                                         }
                                         else
-                                            coord.selection = false;
+                                            coord.Selection = false;
                                     }
                                     else
-                                        coord.selection = false;
+                                        coord.Selection = false;
                                 }
                             }
                         }
                     }
                 }
 
-                if (e.Button == MouseButton.Left && mode == 1)
+                if (e.Button == MouseButton.Left && _mode == 1)
                 {
-                    if (primitives.listPrimitive.Count != 0)
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        primitives.listPrimitive[^1].selection = false;
+                        _primitives.ListPrimitive[^1].Selection = false;
                     }
 
-                    var dot = new Vector2(XPosition, YPosition);
-                    temp.Add(new MyPoint(dot, false));
-                    List<MyPoint> point = new List<MyPoint>(temp);
-                    primitives.listPrimitive.Add(new Primitive(mode, point, StandartColor4, true));
-                    temp.Clear();
+                    var dot = new Vector2(_xPosition, _yPosition);
+                    _temp.Add(new MyPoint(dot, false));
+                    var point = new List<MyPoint>(_temp);
+                    _primitives.ListPrimitive.Add(new Primitive(_mode, point, _standartColor4, true));
+                    _temp.Clear();
                 }
 
-                if (e.Button == MouseButton.Left && mode == 2)
+                if (e.Button == MouseButton.Left && _mode == 2)
                 {
-                    if (primitives.listPrimitive.Count != 0)
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        primitives.listPrimitive[^1].selection = false;
+                        _primitives.ListPrimitive[^1].Selection = false;
                     }
 
-                    var dot = new Vector2(XPosition, YPosition);
-                    temp.Add(new MyPoint(dot, false));
-                    primitives.listPrimitive.Add(new Primitive(1, temp, StandartColor4, true));
+                    var dot = new Vector2(_xPosition, _yPosition);
+                    _temp.Add(new MyPoint(dot, false));
+                    _primitives.ListPrimitive.Add(new Primitive(1, _temp, _standartColor4, true));
 
-                    if (temp.Count == 2)
+                    if (_temp.Count == 2)
                     {
-                        List<MyPoint> point = new List<MyPoint>(temp);
-                        primitives.listPrimitive.Add(new Primitive(mode, point, StandartColor4, true));
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        temp.Clear();
-                    }
-                }
-
-                if (e.Button == MouseButton.Left && mode == 3)
-                {
-                    if (primitives.listPrimitive.Count != 0)
-                    {
-                        primitives.listPrimitive[^1].selection = false;
-                    }
-
-                    var dot = new Vector2(XPosition, YPosition);
-                    temp.Add(new MyPoint(dot, false));
-                    primitives.listPrimitive.Add(new Primitive(1, temp, StandartColor4, true));
-                    if (temp.Count == 2)
-                    {
-                        primitives.listPrimitive.Add(new Primitive(2, temp, StandartColor4, true));
-                    }
-
-                    if (temp.Count == 3)
-                    {
-                        List<MyPoint> point = new List<MyPoint>(temp);
-                        primitives.listPrimitive.Add(new Primitive(mode, point, StandartColor4, true));
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        primitives.listPrimitive.RemoveAt(primitives.listPrimitive.Count - 2);
-                        temp.Clear();
+                        List<MyPoint> point = new List<MyPoint>(_temp);
+                        _primitives.ListPrimitive.Add(new Primitive(_mode, point, _standartColor4, true));
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _temp.Clear();
                     }
                 }
 
-                if (e.Button == MouseButton.Left && mode == 4)
+                if (e.Button == MouseButton.Left && _mode == 3)
                 {
-                    if (primitives.listPrimitive.Count != 1)
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        primitives.listPrimitive[^2].selection = false;
+                        _primitives.ListPrimitive[^1].Selection = false;
                     }
 
-                    if (primitives.listPrimitive[^1].type == 4)
+                    var dot = new Vector2(_xPosition, _yPosition);
+                    _temp.Add(new MyPoint(dot, false));
+                    _primitives.ListPrimitive.Add(new Primitive(1, _temp, _standartColor4, true));
+                    if (_temp.Count == 2)
                     {
-                        Vector2 coord = new Vector2(XPosition, YPosition);
-                        MyPoint point = new MyPoint(coord, false);
-                        primitives.listPrimitive[^1].Primitive_add(point);
+                        _primitives.ListPrimitive.Add(new Primitive(2, _temp, _standartColor4, true));
+                    }
+
+                    if (_temp.Count == 3)
+                    {
+                        var point = new List<MyPoint>(_temp);
+                        _primitives.ListPrimitive.Add(new Primitive(_mode, point, _standartColor4, true));
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _primitives.ListPrimitive.RemoveAt(_primitives.ListPrimitive.Count - 2);
+                        _temp.Clear();
+                    }
+                }
+
+                if (e.Button == MouseButton.Left && _mode == 4)
+                {
+                    if (_primitives.ListPrimitive.Count != 1)
+                    {
+                        _primitives.ListPrimitive[^2].Selection = false;
+                    }
+
+                    if (_primitives.ListPrimitive[^1].Type == 4)
+                    {
+                        var coord = new Vector2(_xPosition, _yPosition);
+                        var point = new MyPoint(coord, false);
+                        _primitives.ListPrimitive[^1].Primitive_add(point);
                     }
                     else
                     {
-                        primitives.listPrimitive.Add(new Primitive(mode, new List<MyPoint>(), StandartColor4, true));
-                        if (primitives.listPrimitive.Count != 0)
+                        _primitives.ListPrimitive.Add(new Primitive(_mode, new List<MyPoint>(), _standartColor4, true));
+                        if (_primitives.ListPrimitive.Count != 0)
                         {
-                            primitives.listPrimitive[^2].selection = false;
+                            _primitives.ListPrimitive[^2].Selection = false;
                         }
 
-                        Vector2 coord = new Vector2(XPosition, YPosition);
-                        MyPoint point = new MyPoint(coord, false);
-                        primitives.listPrimitive[^1].Primitive_add(point);
+                        var coord = new Vector2(_xPosition, _yPosition);
+                        var point = new MyPoint(coord, false);
+                        _primitives.ListPrimitive[^1].Primitive_add(point);
                     }
                 }
 
@@ -469,23 +462,23 @@ namespace Lab_1_Comp_Graf
             {
                 base.OnMouseDown(e);
                 
-                if (e.Button == MouseButton.Left && mode == 9)
+                if (e.Button == MouseButton.Left && _mode == 9)
                 {
-                    var lUp = new Vector2(XPosition - 5, YPosition + 5);
-                    var rDown = new Vector2(XPosition + 5, YPosition - 5);
-                    if (primitives.listPrimitive.Count != 0)
+                    var lUp = new Vector2(_xPosition - 5, _yPosition + 5);
+                    var rDown = new Vector2(_xPosition + 5, _yPosition - 5);
+                    if (_primitives.ListPrimitive.Count != 0)
                     {
-                        foreach (var p in primitives.listPrimitive)
+                        foreach (var p in _primitives.ListPrimitive)
                         {
-                            if (p.selection)
+                            if (p.Selection)
                             {
-                                foreach (var coord in p.coordinates)
+                                foreach (var coord in p.Coordinates)
                                 {
-                                    if (coord.selection)
+                                    if (coord.Selection)
                                     {
-                                        coord.coordinates.X = XPosition;
-                                        coord.coordinates.Y = YPosition;
-                                        coord.selection = false;
+                                        coord.Coordinates.X = _xPosition;
+                                        coord.Coordinates.Y = _yPosition;
+                                        coord.Selection = false;
                                     }
                                 }
                             }
@@ -503,10 +496,8 @@ namespace Lab_1_Comp_Graf
 
         public static void Main(string[] args)
         {
-            using (Game game = new Game(GameWindowSettings.Default, Program.Game.nativeWindowSettings))
-            {
-                game.Run();
-            }
+            using var game = new Game(GameWindowSettings.Default, Program.Game.NativeWindowSettings);
+            game.Run();
         }
     }
 }
