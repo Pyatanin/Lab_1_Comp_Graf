@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="freeglut" Version="2.8.1.15" />
+      <PackageReference Include="freeglut.3.0.0.v140" Version="1.0.2" />
+      <PackageReference Include="GtkSharp" Version="3.24.24.38" />
+      <PackageReference Include="OpenTK" Version="4.6.7" />
+    </ItemGroup>
+
+</Project>
